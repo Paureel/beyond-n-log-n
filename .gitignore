@@ -1,0 +1,25 @@
+node_modules/
+dist/
+coverage/
+.vite/
+.cache/
+
+# Local credentials and hosting state
+.env
+.env.*
+!.env.example
+.npmrc
+.secrets/
+credentials*.json
+*.key
+*.pem
+*.p12
+*.pfx
+.netlify/
+
+# Local tooling and generated files
+.codex/
+.agents/
+*.log
+*.tsbuildinfo
+.DS_Store
