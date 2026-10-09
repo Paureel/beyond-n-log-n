@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-09T12:52:45.135Z",
+  "snapshotPRs": 162,
+  "livePRs": 185,
+  "conditionalStatus": 304,
+  "conditionalBodyBytes": 0,
+  "codecs": {
+    "gzip": {
+      "oldSnapshot": 316686,
+      "oldLive": 313242,
+      "newSnapshot": 104882,
+      "newLive": 112748,
+      "frontend": 104299,
+      "medianDescription": 2201,
+      "scenarios": [
+        {
+          "name": "First visit, bootstrap already current",
+          "beforeBytes": 726953,
+          "afterBytes": 209181,
+          "savedPercent": 71.22496227403973,
+          "beforeBandwidthCreditsPer10000": 145.3906,
+          "afterBandwidthCreditsPer10000": 41.836200000000005
+        },
+        {
+          "name": "First visit, newer research available",
+          "beforeBytes": 734227,
+          "afterBytes": 321929,
+          "savedPercent": 56.154023210805384,
+          "beforeBandwidthCreditsPer10000": 146.8454,
+          "afterBandwidthCreditsPer10000": 64.3858
+        },
+        {
+          "name": "First visit, newer research + 3 typical descriptions",
+          "beforeBytes": 734227,
+          "afterBytes": 328532,
+          "savedPercent": 55.254710055609515,
+          "beforeBandwidthCreditsPer10000": 146.8454,
+          "afterBandwidthCreditsPer10000": 65.7064
+        },
+        {
+          "name": "Returning visit, unchanged data",
+          "beforeBytes": 313242,
+          "afterBytes": 0,
+          "savedPercent": 100,
+          "beforeBandwidthCreditsPer10000": 62.6484,
+          "afterBandwidthCreditsPer10000": 0
+        },
+        {
+          "name": "Refresh with changed data",
+          "beforeBytes": 313242,
+          "afterBytes": 112748,
+          "savedPercent": 64.0061039068835,
+          "beforeBandwidthCreditsPer10000": 62.6484,
+          "afterBandwidthCreditsPer10000": 22.5496
+        }
+      ]
+    },
+    "brotli": {
+      "oldSnapshot": 265794,
+      "oldLive": 274657,
+      "newSnapshot": 89480,
+      "newLive": 97523,
+      "frontend": 105897,
+      "medianDescription": 2201,
+      "scenarios": [
+        {
+          "name": "First visit, bootstrap already current",
+          "beforeBytes": 630948,
+          "afterBytes": 195377,
+          "savedPercent": 69.0343736726323,
+          "beforeBandwidthCreditsPer10000": 126.1896,
+          "afterBandwidthCreditsPer10000": 39.0754
+        },
+        {
+          "name": "First visit, newer research available",
+          "beforeBytes": 646348,
+          "afterBytes": 292900,
+          "savedPercent": 54.6838545179996,
+          "beforeBandwidthCreditsPer10000": 129.2696,
+          "afterBandwidthCreditsPer10000": 58.58
+        },
+        {
+          "name": "First visit, newer research + 3 typical descriptions",
+          "beforeBytes": 646348,
+          "afterBytes": 299503,
+          "savedPercent": 53.662268623094675,
+          "beforeBandwidthCreditsPer10000": 129.2696,
+          "afterBandwidthCreditsPer10000": 59.9006
+        },
+        {
+          "name": "Returning visit, unchanged data",
+          "beforeBytes": 274657,
+          "afterBytes": 0,
+          "savedPercent": 100,
+          "beforeBandwidthCreditsPer10000": 54.931400000000004,
+          "afterBandwidthCreditsPer10000": 0
+        },
+        {
+          "name": "Refresh with changed data",
+          "beforeBytes": 274657,
+          "afterBytes": 97523,
+          "savedPercent": 64.49280375158834,
+          "beforeBandwidthCreditsPer10000": 54.931400000000004,
+          "afterBandwidthCreditsPer10000": 19.5046
+        }
+      ]
+    }
+  }
+}

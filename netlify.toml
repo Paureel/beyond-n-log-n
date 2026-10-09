@@ -15,6 +15,11 @@ to = "/.netlify/functions/research"
 status = 200
 
 [[redirects]]
+from = "/api/pr-description"
+to = "/.netlify/functions/pr-description"
+status = 200
+
+[[redirects]]
 from = "/*"
 to = "/index.html"
 status = 200
@@ -27,3 +32,8 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 Content-Security-Policy = "default-src 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://github.com https://*.githubusercontent.com; connect-src 'self'; frame-src 'self' https://www.netlify.com https://app.netlify.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 X-Frame-Options = "DENY"
 Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+[[headers]]
+for = "/assets/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"

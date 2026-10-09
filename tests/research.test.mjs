@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {extractBound,parseExpression,classify} from '../lib/research.mjs';
-const snapshot=JSON.parse(fs.readFileSync(new URL('../public/research.json',import.meta.url)));
+const snapshot=JSON.parse(fs.readFileSync(new URL('../data/research.json',import.meta.url)));
 test('the real PR corpus preserves final exponents rather than component savings or comparison values',()=>{
  const values={1:1.7523184e-18,2:17*2**-63,3:59/10**11,4:591/10**12,5:1479/10**12,7:373/10**11,9:19/5000000000,10:6149999/50000000000000,15:1076678/10**12,20:5834475279233921242758637328164947/(5*10**39),23:1099/10**8,31:7939287/500000000000,35:16631776/10**12,36:384569/10000000000,37:3850771033/10**14,38:242889/6250000000};
  for(const [number,value] of Object.entries(values)){const p=snapshot.prs.find(p=>p.number===+number);const bound=extractBound(p.title,p.body);assert.ok(bound,`PR ${number}`);assert.ok(Math.abs(bound.value/value-1)<1e-14,`PR ${number}: ${bound.value} vs ${value}`);}
