@@ -23,7 +23,7 @@ test('history retains the original OpenAI bound and first repository commit with
  assert.equal(history[1].bound.value,5.8e-33);
  assert.match(history[1].url,new RegExp(first));
  calls.length=0;
- commits.push({sha:next,commit:{committer:{date:'2026-10-07T13:48:36Z'},author:{name:'Repository author'},message:'Routing improvement'}});
+ commits.unshift({sha:next,parents:[{sha:first}],commit:{committer:{date:'2026-10-07T13:48:36Z'},author:{name:'Repository author'},message:'Routing improvement'}});
  const updated=await collectHistory({...args,priorData:{history}});
  assert.equal(updated.length,3);
  assert.equal(updated[2].bound.value,2**-78);

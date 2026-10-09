@@ -12,3 +12,7 @@
 @media(max-width:570px){.timeline-range-dates{font-size:.55rem}.timeline .playback{gap:6px}.timeline .playback>.meta{display:none}}
 
 .title-math{font-family:Georgia,serif;font-style:italic;color:var(--lime);white-space:nowrap}
+
+.reviewed-tag{display:block;width:fit-content;margin-top:5px;padding:3px 6px;border:1px solid #536d43;border-radius:4px;color:var(--lime);font-size:.6rem;line-height:1.2;font-family:var(--mono)}.metric-value:disabled{cursor:default}.detail-section code{overflow-wrap:anywhere}
+
+@media(max-width:570px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{min-width:0}.primary .metric-value{font-size:clamp(.82rem,3.8vw,1.32rem)}.metric-label{min-height:2.5em}}
