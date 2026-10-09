@@ -103,3 +103,7 @@ npm run build
 Tests independently check important real-corpus exponents, Unicode/TeX parsing, non-improvement exclusions, formal-tool tagging, multi-parent idea reuse, comparison/credit exclusions, fork reference identity, chronological ancestry, pagination, descendant forks, fork-local PRs, refresh deduplication, persistent caching, outage fallback, maintainer-only selection, reductions/withdrawals and exact-head review attribution. The production build is written to `dist`.
 
 Key files: `src/App.tsx`, `src/Timeline.tsx`, `src/FieldMap.tsx`, `lib/research.mjs` (classification/extraction), `lib/github.mjs` (collection), `lib/service.mjs` (cache and fallback), and `netlify/functions/research.mjs` (Netlify adapter).
+
+## License
+
+The dashboard is licensed under [Apache License 2.0](LICENSE). Copyright 2026 Paureel. See [NOTICE](NOTICE) for attribution. Bundled research text and third-party dependencies retain their original attribution and applicable source licenses.
