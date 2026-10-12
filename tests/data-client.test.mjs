@@ -29,6 +29,9 @@ test('offline and unavailable storage retain charts; invalid saved data falls ba
 test('an unchanged response still exposes an upstream outage instead of claiming live data',async()=>{
  let last;const data=record();const client=createResearchClient({storage:()=>undefined,fetcher:async url=>url==='/research.json'?Response.json(data):new Response(null,{status:304,headers:{'X-Research-Live':'false','X-Research-Refresh-Error':'The GitHub refresh timed out.'}})});client.subscribe(next=>last=next);await client.start();assert.equal(last.status.live,false);assert.match(last.status.error,/timed out/);assert.ok(last.data);
 });
+test('a 304 served by the CDN cache without custom headers stays live',async()=>{
+ let last;const data=record();const client=createResearchClient({storage:()=>undefined,fetcher:async url=>url==='/research.json'?Response.json(data):new Response(null,{status:304})});client.subscribe(next=>last=next);await client.start();assert.equal(last.status.live,true);assert.equal(last.status.error,'');assert.ok(last.data);
+});
 test('descriptions are lazy, deduplicated, cached per revision, and retryable after failure',async()=>{
  let calls=0;const pr={id:'owner/repo#1',repo:'owner/repo',number:1,descriptionVersion:'a'.repeat(64)};
  const load=createDescriptionClient({fetcher:async url=>{calls++;return Response.json({id:pr.id,version:new URL(url,'https://example.test').searchParams.get('version'),body:'Full description'});}});assert.equal(calls,0);assert.deepEqual(await Promise.all([load(pr),load(pr)]),['Full description','Full description']);await load(pr);assert.equal(calls,1);await load({...pr,descriptionVersion:'b'.repeat(64)});assert.equal(calls,2);
