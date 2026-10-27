@@ -96,7 +96,7 @@ test('the kappa client completes while a full research refresh is still pending 
  const saved=new Map(),storage=()=>({getItem:key=>saved.get(key),setItem:(key,value)=>saved.set(key,value)});
  let release,latest;
  const full=createResearchClient({storage,fetcher:async url=>url==='/research.json'?Response.json(research):new Promise(resolve=>{release=resolve;})});
- const independent=createKappaClient({storage,fetcher:async url=>{assert.ok(['/kappa.json','/api/kappa?v=1'].includes(url));return Response.json({...kappa,live:true});}});
+ const independent=createKappaClient({storage,fetcher:async(url,options)=>{assert.ok(['/kappa.json','/api/kappa?v=1'].includes(url));if(url.startsWith('/api/'))assert.equal(options.cache,'no-store','the browser must not generate its own conditional request');assert.ok(!options?.headers?.['If-None-Match'],'small kappa responses carry freshness in JSON rather than relying on CDN 304 headers');return Response.json({...kappa,live:true});}});
  independent.subscribe(state=>latest=state);
  const waiting=full.start();await independent.start();
  assert.equal(latest.data.maintainer.current.bound.value,0.00310045);assert.equal(latest.status.live,true);

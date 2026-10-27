@@ -55,6 +55,8 @@ The selected κ has its own `/api/kappa` function, Blob store, browser cache and
 
 The independent path appends each observed selection using its immutable source commit timestamp. `npm run sync:kappa` also backfills the feed's bounded recent window; it does not claim to enumerate all older selections. The existing full collector resolves main-branch publication dates and retains older history. On read/source errors, the κ cache keeps the last successful value, marks it stale and retries after one minute. An explicit withdrawal or confirmed deletion clears the current headline. Independent CDN freshness is capped by the remaining 15-minute source-cache lifetime, so the two cache layers do not restart each other's TTL.
 
+The browser receives κ freshness in the small JSON response instead of depending on custom headers on HTTP 304 responses, which Netlify may omit. The κ snapshot is roughly 20 KB gzipped for the current dataset. The much larger PR/research stream retains conditional requests.
+
 ### Automatic updates
 
 The dashboard checks for fresh data on page load, when returning to the tab, and every 15 minutes while visible. Chart data is saved in browser storage. A returning visit uses that copy immediately and skips the bundled snapshot; a first visit loads the compact snapshot before checking the live endpoint. Conditional requests use a research revision: unchanged data returns HTTP 304 with fresh collection/status headers and no dataset. Collection timestamps and API quota counters do not force a download. Edits, state changes, new PRs, lineage changes and maintainer withdrawals do.
