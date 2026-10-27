@@ -51,15 +51,21 @@ To set up continuous deployment from Git instead:
 
 Netlify Blobs automatically stores the last successful public research record. It contains public GitHub data only. If shared storage is unavailable, the function continues with its in-memory cache and bundled snapshot.
 
+The selected κ has its own `/api/kappa` function, Blob store, browser cache and small `kappa.json` snapshot. It uses GitHub's public selected-file commit feed plus raw JSON, without REST API calls or credentials. Every successful check compares the main-branch record to its immutable source commit; mismatched sources retain last-good data until they agree. Live checks take two small requests when unchanged, three after a selection change. PR pagination, fork discovery and README/history scans cannot block this function. The browser starts both clients independently and keeps their freshness timestamps separate.
+
+The independent path appends each observed selection using its immutable source commit timestamp. `npm run sync:kappa` also backfills the feed's bounded recent window; it does not claim to enumerate all older selections. The existing full collector resolves main-branch publication dates and retains older history. On read/source errors, the κ cache keeps the last successful value, marks it stale and retries after one minute. An explicit withdrawal or confirmed deletion clears the current headline. Independent CDN freshness is capped by the remaining 15-minute source-cache lifetime, so the two cache layers do not restart each other's TTL.
+
 ### Automatic updates
 
 The dashboard checks for fresh data on page load, when returning to the tab, and every 15 minutes while visible. Chart data is saved in browser storage. A returning visit uses that copy immediately and skips the bundled snapshot; a first visit loads the compact snapshot before checking the live endpoint. Conditional requests use a research revision: unchanged data returns HTTP 304 with fresh collection/status headers and no dataset. Collection timestamps and API quota counters do not force a download. Edits, state changes, new PRs, lineage changes and maintainer withdrawals do.
 
 Full PR descriptions load from `/api/pr-description` only when opened, without starting a GitHub collection. They are cached by a version covering the body, head and update timestamp. An old version is never silently paired with a new description. Lineage relations and source excerpts are computed server-side and included in the compact chart data, so that graph never depends on opening descriptions. Unused README text stays out of the normal public payload. An explicit JSON export downloads the full record on demand. The old API version remains compatible with already-open tabs; reloading them switches to compact loading.
 
+Large research responses use streamed gzip when the client supports it, including explicit full exports. This keeps the growing dataset below Netlify's streamed-response size limit and reduces transfer size. Small responses keep the existing JSON format, and unchanged checks still return HTTP 304. `Vary: Accept-Encoding` separates CDN variants. The bundled snapshot's collection time is respected on deployment cold starts instead of immediately repeating a fresh full scan.
+
 A successful Netlify response is cached for 15 minutes in its durable CDN cache. A shared full last-good record handles cold starts. A single in-flight collection is reused for concurrent requests. Refresh failures back off for five minutes and keep the previous data, visibly marked as a snapshot even for conditional responses. Previously loaded descriptions remain available in the current browser session. If browser storage is blocked or full, the bundled snapshot still works. Content-hashed frontend assets have a one-year immutable browser cache.
 
-Upstream PRs, the maintainer selection and its commit history, first-parent main-branch README history and public fork discovery refresh every 15 minutes. First-parent main-branch README snapshots and the pinned OpenAI manuscript are collected once per immutable commit and reused on later refreshes. Fork-local PRs and fork READMEs refresh every 15 minutes with a token, or hourly without a token. These update without site rebuilds. Opening the site after an inactive period starts a refresh; this is request-driven, not a background scheduler.
+The independent κ check runs on opening, returning to the tab and every 15 minutes while visible. The larger PR/history/fork collection attempts its own refresh on the same cadence and may retain a snapshot when GitHub's REST quota is exhausted. First-parent main-branch README snapshots and the pinned OpenAI manuscript are collected once per immutable commit and reused on later refreshes. Fork-local PRs and fork READMEs refresh every 15 minutes with a token, or hourly without a token. These update without site rebuilds. Opening the site after an inactive period starts a refresh; this is request-driven, not a background scheduler.
 
 A token is strongly recommended: [GitHub allows 60 unauthenticated REST requests per hour versus typically 5,000 authenticated requests](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api). This dashboard reads multiple repositories; shared hosting and additional cold starts can exhaust the anonymous allowance. The token stays server-side. [Netlify environment-variable documentation](https://docs.netlify.com/build/functions/environment-variables/) explains the Functions scope.
 
@@ -67,6 +73,7 @@ A token is strongly recommended: [GitHub allows 60 unauthenticated REST requests
 
 ```sh
 npm run sync
+npm run sync:kappa
 ```
 
 Use `GITHUB_TOKEN=your_read_only_token npm run sync` if necessary. It reads all paginated upstream PRs, forks, descendant forks, fork-local PRs and default-branch READMEs. The full server snapshot is saved in `data/research.json`, outside the public directory; the compact browser snapshot is generated in `public/research.json`. Both contain public GitHub sources only. A failed collection does not overwrite the existing snapshot. The snapshot is not a substitute for the live Netlify endpoint.

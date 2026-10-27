@@ -46,6 +46,7 @@ test('wording, whitespace, case and publication or CI notes do not require a new
  for(const status of [
   '  MAINTAINER–REVIEWED   conditional finite construction  ; published on main',
   'Maintainer reviewed conditional construction — exact source-bound replay complete',
+  'Selected maintainer-reviewed conditional PR5413 completion, with companion audits and explicit inherited foundation reuse',
   'Selected conditional finite construction, reviewed by the maintainer; integration Linux CI pending',
   'Published on main: conditional composition reviewed by maintainer (publication receipt attached)',
   'Selected maintainer-reviewed conditional witness; publication is pending',

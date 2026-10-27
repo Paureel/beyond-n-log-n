@@ -9,6 +9,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "sync": "node scripts/sync.mjs",
+    "sync:kappa": "node scripts/sync-kappa.mjs",
     "test": "node --test tests/*.test.mjs",
     "measure:bandwidth": "node scripts/measure-bandwidth.mjs"
   },

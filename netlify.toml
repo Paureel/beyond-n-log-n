@@ -10,6 +10,11 @@ directory = "netlify/functions"
 node_bundler = "esbuild"
 
 [[redirects]]
+from = "/api/kappa"
+to = "/.netlify/functions/kappa"
+status = 200
+
+[[redirects]]
 from = "/api/research"
 to = "/.netlify/functions/research"
 status = 200

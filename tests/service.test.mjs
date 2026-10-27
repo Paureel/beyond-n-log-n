@@ -3,9 +3,22 @@ import assert from 'node:assert/strict';
 import {createResearchService} from '../lib/service.mjs';
 import {collectResearch} from '../lib/github.mjs';
 import {compactResearch,descriptionVersion} from '../lib/payload.mjs';
+import {gunzipSync} from 'node:zlib';
 const request=()=>new Request('https://example.test/api/research');
 const now=Date.parse('2026-10-09T12:00:00Z');
 const fullRecord=()=>({schemaVersion:1,fetchedAt:new Date(now).toISOString(),repository:{readme:'Full README'},maintainer:{current:null,history:[]},prs:[{id:'owner/repo#1',repo:'owner/repo',number:1,title:'A result',body:'This builds on #2. Full private-to-the-payload description.',headSha:'a'.repeat(40),updatedAt:new Date(now).toISOString()}],forks:[],coverage:{apiRemaining:'3000'}});
+test('large datasets stream with gzip without changing their research content',async()=>{
+ const data=fullRecord();data.prs[0].title='Research evidence '.repeat(100000);
+ const service=createResearchService({collect:async()=>data});
+ for(const query of ['?v=compact-2','?format=full']){
+  const response=await service(new Request('https://test/api/research'+query,{headers:{'Accept-Encoding':'gzip, br'}}));
+  assert.equal(response.headers.get('Content-Encoding'),'gzip');assert.equal(response.headers.get('Vary'),'Accept-Encoding');
+  const bytes=Buffer.from(await response.arrayBuffer()),decoded=JSON.parse(gunzipSync(bytes));
+  assert.equal(decoded.prs[0].title,data.prs[0].title);assert.ok(bytes.length<10000);
+ }
+ const plain=await service(new Request('https://test/api/research',{headers:{'Accept-Encoding':'gzip;q=0'}}));
+ assert.equal(plain.headers.get('Content-Encoding'),null);assert.equal((await plain.json()).prs[0].title,data.prs[0].title);
+});
 test('the public response is compact and an unchanged collection returns 304 with fresh sync metadata',async()=>{
  const data=fullRecord();let time=now;const service=createResearchService({now:()=>time,collect:async()=>({...data,fetchedAt:new Date(time).toISOString(),coverage:{apiRemaining:'2999'}})});
  const first=await service(request()),json=await first.json();assert.ok(!('body' in json.prs[0]));assert.ok(!('readme' in json.repository));assert.equal(json.prs[0].ideaLinks[0].kind,'reuse');
@@ -52,6 +65,11 @@ test('GitHub failure preserves the last-good data, identifies staleness and back
 test('a shared fresh record survives a cold start without a new GitHub fetch',async()=>{
  let calls=0;const time=Date.parse('2026-10-08T12:00:00Z');const service=createResearchService({now:()=>time,read:async()=>({fetchedAt:new Date(time-10000).toISOString(),prs:[{number:99}]}),collect:async()=>{calls++;throw Error('must not run');}});
  const data=await(await service(request())).json();assert.equal(data.prs[0].number,99);assert.equal(data.live,true);assert.equal(calls,0);
+});
+test('a recently refreshed bundled snapshot avoids another full scan on deployment cold starts',async()=>{
+ const data=fullRecord();let calls=0;
+ const service=createResearchService({snapshot:data,now:()=>now+1000,collect:async()=>{calls++;throw Error('must not collect');}});
+ const response=await service(request());assert.equal((await response.json()).live,true);assert.equal(calls,0);
 });
 test('public refresh failures do not echo credentials or internal exception details',async()=>{
  const internal='Internal failure: credential=DO_NOT_DISCLOSE /private/server/config';
